@@ -71,8 +71,6 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
     }
     ++page;
 
-//    printf("Address: %p: \n", currentAddress);
-//    printf("Page: %d\n", page);
     // check if we are able to read the page, expect segmentation fault
     char testRead = (char) *currentAddress;
     mode = MEM_RO;
@@ -80,15 +78,10 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
     int byteNum = 0;    
     unsigned char * addressTesting = currentAddress;
     while (byteNum < pageSize) {
-       // set mode back to mem_violation as there may be a violation for an individual byte
+
+      // set mode back to mem_violation as there may be a violation for an individual byte
       mode = MEM_VIO;
-      /*      
-      int i = 0;
-      for (; i < patlength; ++i) {
-	bytesToCmp[i] = *(addressTesting + i);
-      }
-      bytesToCmp[patlength] = '\0';
-      */
+
       //      if(memcmp(pattern, addressTesting, patlength) == 0) {
       if(isMatch(pattern, addressTesting, patlength)) {
 	printf("Pattern to compare: %s\n", pattern);
@@ -101,7 +94,6 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
 	if (count <= loclength) {
 	  // we know we can read test once to see if we can write to page
 	  if (sigsetjmp(writeViolationJumpBuffer, 1) == 0) {
-	    // printf("%p: write attempt: ", currentAddress);
 	    *addressTesting = 'a';
 	    mode = MEM_RW;
 	    longjmp(writeViolationJumpBuffer, 1);
@@ -112,7 +104,6 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
 	  }
           locations[count].location = page*pageSize + byteNum;
           locations[count].mode = mode;
-	  //	  printf("locations[0].mode: %d", locations[0].mode);
 	}
 	addressTesting += patlength;
 	++count;
