@@ -83,6 +83,7 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
       mode = MEM_VIO;
 
       //      if(memcmp(pattern, addressTesting, patlength) == 0) {
+      // SKETCHY... prevent going over page when checking.. although doesn't really matter
       if(isMatch(pattern, addressTesting, patlength)) {
 	printf("Pattern to compare: %s\n", pattern);
 	//	printf("Bytes to compare: %s\n", bytesToCmp);
@@ -102,6 +103,7 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
 	  } else {
 	    printf("FAIL\n");
 	  }
+          // SKETCHY... Is this what they want? Do they want a hexadecimal
           locations[count].location = page*pageSize + byteNum;
           locations[count].mode = mode;
 	}
