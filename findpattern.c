@@ -64,40 +64,23 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
       //      if(memcmp(pattern, addressTesting, patlength) == 0) {
       // SKETCHY... prevent going over page when checking.. although doesn't really matter
       if(isMatch(pattern, addressTesting, patlength)) {
-//	printf("Pattern to compare: %s\n", pattern);
-//        char foundPattern[patlength+1];
-//        int i = 0;
-//        for (; i < patlength; ++i) {
-//          foundPattern[i] = (char) *(addressTesting + i);
-//        }
-//        foundPattern[patlength + 1] ='\n';
-//	printf("Bytes to compare: %s\n", foundPattern);
-//	printf("Match found.\n");
-//	printf("Address found: %p\n", addressTesting);
-	
-	// set mode to mem_ro as we know we can read the entire space with the matching pattern
-	mode = MEM_RO;
-	if (count <= loclength) {
-	  // we know we can read test once to see if we can write to page
-	  if (sigsetjmp(writeViolationJumpBuffer, 1) == 0) {
-	    *addressTesting = 'a';
-	    mode = MEM_RW;
-	    siglongjmp(writeViolationJumpBuffer, 1);
-	  }
-//          else if(mode == MEM_RW) {
-//	    printf("SUCCESS\n");
-//	  } else {
-//	    printf("FAIL\n");
-//	  }
-          // SKETCHY... Is this what they want? Do they want a hexadecimal
+              
+        // set mode to mem_ro as we know we can read the entire space with the matching pattern
+        mode = MEM_RO;
+        if (count <= loclength) {
+          // we know we can read test once to see if we can write to page
+          if (sigsetjmp(writeViolationJumpBuffer, 1) == 0) {
+            *addressTesting = 'a';
+            mode = MEM_RW;
+            siglongjmp(writeViolationJumpBuffer, 1);
+        }
           locations[count].location = page*pageSize + byteNum;
-//          printf("MODE: %d\n", mode);
           locations[count].mode = mode;
-	}
-	addressTesting += patlength;
-	++count;
-      } else {
-	++addressTesting;
+        }
+        addressTesting += patlength;
+        ++count;
+            } else {
+        ++addressTesting;
       }
       ++byteNum;
     }
