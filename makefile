@@ -1,2 +1,2 @@
 all:
-	gcc findpattern.c main.c -o findpattern
+	gcc findpattern.c main.c -o findpattern -m32

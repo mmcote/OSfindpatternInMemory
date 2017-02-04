@@ -5,12 +5,19 @@ int main() {
   int locationsRequested = 20;
   struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
 
-  unsigned char * test = (unsigned char *) "CanYouHearMeNow";
+  unsigned char * testString = (unsigned char *) "CanYouHearMeNow";
   unsigned int sizeOfString = 15;
 
-  printf("Matches found: %d (Locations Requested: %d, MEM_RO == 1, MEM_RW == 0\n", findpattern(test, sizeOfString, locations, locationsRequested), locationsRequested);
+  int matchesFound = findpattern(testString, sizeOfString, locations, locationsRequested);
+  printf("Matches found: %d (Locations Requested: %d, MEM_RO == 1, MEM_RW == 0)\n", matchesFound, locationsRequested);
+
+  int locationsFound = locationsRequested;
+  if (matchesFound < locationsRequested) {
+    locationsFound = matchesFound;
+  }
+
   int i = 0;
-  for (; i < locationsRequested; ++i) {
+  for (; i < matchesFound; ++i) {
     printf("Location: %d, Mode: %d\n", locations[i].location, locations[i].mode);
   }
 
@@ -22,9 +29,16 @@ int main() {
   	strcpy(stringArray[j], "CanYouHearMeNow");
   }
 
-  printf("Matches found: %d (Locations Requested: %d, MEM_RO == 1, MEM_RW == 0\n", findpattern(test, sizeOfString, locations, locationsRequested), locationsRequested);
+  matchesFound = findpattern(testString, sizeOfString, locations, locationsRequested);
+  printf("Matches found: %d (Locations Requested: %d, MEM_RO == 1, MEM_RW == 0)\n", matchesFound, locationsRequested);
+
+  locationsFound = locationsRequested;
+  if (matchesFound < locationsRequested) {
+    locationsFound = matchesFound;
+  }
+
   int k = 0;
-  for (; k < locationsRequested; ++k) {
+  for (; k < locationsFound; ++k) {
     printf("Location: %d, Mode: %d\n", locations[k].location, locations[k].mode);
   }
   return 0;
