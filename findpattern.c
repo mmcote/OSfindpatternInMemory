@@ -70,11 +70,12 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
         if (count <= loclength) {
           // we know we can read test once to see if we can write to page
           if (sigsetjmp(writeViolationJumpBuffer, 1) == 0) {
-            *addressTesting = 'a';
+            char tempVar = *addressTesting;
+            *addressTesting = tempVar;
             mode = MEM_RW;
             siglongjmp(writeViolationJumpBuffer, 1);
         }
-          locations[count].location = page*pageSize + byteNum;
+          locations[count].location = (unsigned int) addressTesting;
           locations[count].mode = mode;
         }
         addressTesting += patlength;
