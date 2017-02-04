@@ -10,16 +10,6 @@ void segmentViolationHandler(int sig) {
   }
 }
 
-bool isMatch(unsigned char * pattern, unsigned char * potentialPattern, unsigned int patlength) {
-  int i = 0;
-  for(; i < patlength; ++i) {
-    if (pattern[i] != potentialPattern[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
 unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struct patmatch *locations, unsigned int loclength) {
 
   // create sigaction for handling SIGSEGV
@@ -61,10 +51,15 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
       // set mode back to mem_violation as there may be a violation for an individual byte
       mode = MEM_VIO;
 
-      //      if(memcmp(pattern, addressTesting, patlength) == 0) {
-      // SKETCHY... prevent going over page when checking.. although doesn't really matter
-      if(isMatch(pattern, addressTesting, patlength)) {
-              
+      bool match = true;
+      int i = 0;
+      for(; i < patlength; ++i) {
+        if (pattern[i] != addressTesting[i]) {
+          match = false;
+        }
+      }
+
+      if(match) {
         // set mode to mem_ro as we know we can read the entire space with the matching pattern
         mode = MEM_RO;
         if (count <= loclength) {
