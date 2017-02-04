@@ -1,10 +1,11 @@
-#include "findpattern.h"
+#include "../findpattern.h"
 #include <stdio.h>
 
 int main() {
   int locationsRequested = 20;
   struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
 
+  
   unsigned char * testString = (unsigned char *) "CanYouHearMeNow";
   unsigned int sizeOfString = 15;
 
