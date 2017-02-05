@@ -1,9 +1,9 @@
-#include "findpattern.h"
+#include "../findpattern.h"
 #include <stdio.h>
 #include <sys/mman.h>
 
 
-int main() {
+int main(int argc, char *argv[]) {
   // for formatting
   printf("test1\n");
 
@@ -13,14 +13,15 @@ int main() {
   int locationsRequested = 20;
   struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
 
-  unsigned int sizeOfString = 15;
-  
-  char stackVariable01[sizeOfString + 1];
-  strncpy(stackVariable01, "123456789123456\0", sizeOfString);
-  stackVariable01[sizeOfString] = '\0';
+  unsigned int pageSize = getpagesize(); 
+  unsigned char * copy;
+  copy = mmap(NULL, pageSize, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+  unsigned int sizeOfString = strlen(argv[1]);
+  printf("copy %p\n", copy);
+  memcpy(copy, argv[1], sizeOfString);
   
   printf("Pass 1\n");
-  int matchesFound = findpattern(stackVariable01, sizeOfString, locations, locationsRequested);
+  int matchesFound = findpattern(copy, sizeOfString, locations, locationsRequested);
   printf("Total Matches: %d\n", matchesFound);
 
   int locationsFound = locationsRequested;
@@ -38,10 +39,10 @@ int main() {
     }
   }
 
-  mprotect((void *) &stackVariable01, (size_t) sizeOfString, PROT_NONE);
-
+  mprotect(copy,pageSize,PROT_READ);
+  
   printf("\nPass 2\n");
-  matchesFound = findpattern(stackVariable01, sizeOfString, locations, locationsRequested);
+  matchesFound = findpattern(copy, sizeOfString, locations, locationsRequested);
   printf("Total Matches: %d\n", matchesFound);
 
   locationsFound = locationsRequested;

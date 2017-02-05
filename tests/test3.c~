@@ -3,7 +3,7 @@
 #include <sys/mman.h>
 
 
-int main() {
+int main(int argc, char *argv[]) {
   // for formatting
   printf("test1\n");
 
@@ -13,12 +13,15 @@ int main() {
   int locationsRequested = 20;
   struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
 
-  unsigned int sizeOfString = 15;
-  unsigned char * testString = malloc((sizeOfString+1)*sizeof(char));
-  strcpy((char *) testString, "123456789123456\0");
+  unsigned int pageSize = getpagesize(); 
+  unsigned char * copy;
+  copy = mmap(NULL, pageSize, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+  unsigned int sizeOfString = strlen(argv[1]);
+  printf("copy %p\n", copy);
+  memcpy(copy, argv[1], sizeOfString);
   
   printf("Pass 1\n");
-  int matchesFound = findpattern(testString, sizeOfString, locations, locationsRequested);
+  int matchesFound = findpattern(copy, sizeOfString, locations, locationsRequested);
   printf("Total Matches: %d\n", matchesFound);
 
   int locationsFound = locationsRequested;
@@ -36,22 +39,10 @@ int main() {
     }
   }
 
-
-  //change this
-  //use memprotect
-  /*unsigned int sizeOfStringArray = 50;
-  char **stringArray = malloc(sizeOfStringArray * sizeof(char *));
-  int j = 0;
-  for (; j < sizeOfStringArray; ++j) {
-  	stringArray[j] = (char *) malloc(sizeOfString+1);
-  	strncpy(stringArray[j], (char *) testString, sizeOfString);
-  }*/
-
-  mprotect(testString, sizeOfString, PROT_READ);
-
-  //end change
+  mprotect(copy,pageSize,PROT_READ);
+  
   printf("\nPass 2\n");
-  matchesFound = findpattern(testString, sizeOfString, locations, locationsRequested);
+  matchesFound = findpattern(copy, sizeOfString, locations, locationsRequested);
   printf("Total Matches: %d\n", matchesFound);
 
   locationsFound = locationsRequested;
