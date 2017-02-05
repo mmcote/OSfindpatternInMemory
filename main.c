@@ -1,34 +1,27 @@
 #include "findpattern.h"
 #include <stdio.h>
+#include <sys/mman.h>
 
-void checkFindPatternAfter(unsigned char * testString, unsigned int sizeOfString) {
-  int locationsRequested = 20;
-  struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
-
-  int matchesFound = findpattern(testString, sizeOfString, locations, locationsRequested);
-  printf("Matches found: %d (Locations Requested: %d, MEM_RO == 1, MEM_RW == 0)\n", matchesFound, locationsRequested);
-  
-  int locationsFound = locationsRequested;
-  if (matchesFound < locationsRequested) {
-    locationsFound = matchesFound;
-  }
-
-  int k = 0;
-  for (; k < locationsFound; ++k) {
-    printf("Location: 0x%x, Mode: %d\n", locations[k].location, locations[k].mode);
-  }  
-}
 
 int main() {
+  // for formatting
+  printf("test1\n");
+
+  // memory modification description
+  printf("This modification changes the memory of the address space to read-only using mprotect.\n\n");
+
   int locationsRequested = 20;
   struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
 
   unsigned int sizeOfString = 15;
-  unsigned char * testString = malloc((sizeOfString+1)*sizeof(char));
-  strcpy(testString, "123456789123456\0");
-
-  int matchesFound = findpattern(testString, sizeOfString, locations, locationsRequested);
-  printf("Matches found: %d (Locations Requested: %d, MEM_RO == 1, MEM_RW == 0)\n", matchesFound, locationsRequested);
+  
+  char stackVariable01[sizeOfString + 1];
+  strncpy(stackVariable01, "123456789123456\0", sizeOfString);
+  stackVariable01[sizeOfString] = '\0';
+  
+  printf("Pass 1\n");
+  int matchesFound = findpattern(stackVariable01, sizeOfString, locations, locationsRequested);
+  printf("Total Matches: %d\n", matchesFound);
 
   int locationsFound = locationsRequested;
   if (matchesFound < locationsRequested) {
@@ -36,14 +29,34 @@ int main() {
   }
 
   int i = 0;
-  for (; i < matchesFound; ++i) {
-    printf("Location: 0x%x, Mode: %d\n", locations[i].location, locations[i].mode);
+  for (; i < locationsFound; ++i) {
+    printf("0x%x\t", locations[i].location);
+    if (locations[i].mode == 0) {
+      printf("MEM_RW\n");
+    } else {
+      printf("MEM_RO\n");
+    }
   }
 
-  unsigned char stackVariable[sizeOfString + 1];
-  strncpy(stackVariable, testString, sizeOfString);
-  stackVariable[sizeOfString] = '\0';
+  mprotect((void *) &stackVariable01, (size_t) sizeOfString, PROT_NONE);
 
-  checkFindPatternAfter(testString, sizeOfString);
+  printf("\nPass 2\n");
+  matchesFound = findpattern(stackVariable01, sizeOfString, locations, locationsRequested);
+  printf("Total Matches: %d\n", matchesFound);
+
+  locationsFound = locationsRequested;
+  if (matchesFound < locationsRequested) {
+    locationsFound = matchesFound;
+  }
+
+  int k = 0;
+  for (; k < locationsFound; ++k) {
+    printf("0x%x\t", locations[k].location);
+    if (locations[k].mode == 0) {
+      printf("MEM_RW\n");
+    } else {
+      printf("MEM_RO\n");
+    }
+  }
   return 0;
 }
