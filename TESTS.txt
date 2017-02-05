@@ -1,5 +1,0 @@
-driver1: place instances of the pattern on the heap to see if findPattern() finds them. 
-
-driver2: create local instances of the pattern on the stack. To do this you need to think of how you can store an instance of the pattern on the stack only after your first call to findpattern().
-
-driver3: map a file into memory using mmap(2). You will then use mmap(2) to change the mode of the memory that you are mapping to. We will go over mmap(2) during the lab presentations, but feel free to look it up yourselves if you are curious.

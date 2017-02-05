@@ -1,7 +1,7 @@
 #include "../findpattern.h"
 #include <stdio.h>
 
-int main() {
+int main(int argc, char *argv[]) {
   // for formatting
   printf("test1\n");
 

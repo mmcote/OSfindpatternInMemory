@@ -25,7 +25,7 @@ void checkFindPatternAfter(unsigned char * testString, unsigned int sizeOfString
   }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     // for formatting
   printf("test2\n");
 
