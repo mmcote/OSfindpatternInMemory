@@ -10,6 +10,8 @@ void segmentViolationHandler(int sig) {
   }
 }
 
+void useTheVariable(char testChar) {};
+
 unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struct patmatch *locations, unsigned int loclength) {
 
   // create sigaction for handling SIGSEGV
@@ -42,6 +44,8 @@ unsigned int findpattern (unsigned char * pattern, unsigned int patlength, struc
 
     // check if we are able to read the page, expect segmentation fault
     char testRead = (char) *currentAddress;
+    useTheVariable(testRead);
+    
     mode = MEM_RO;
 
     int byteNum = 0;    
