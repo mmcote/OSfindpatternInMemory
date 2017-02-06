@@ -35,9 +35,9 @@ int main(int argc, char *argv[]) {
   int locationsRequested = 20;
   struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
 
-  unsigned int sizeOfString = 15;
+  unsigned int sizeOfString = strlen(argv[1]);
   unsigned char * testString = malloc((sizeOfString+1)*sizeof(char));
-  strcpy((char *) testString, "123456789123456\0");
+  strcpy((char *) testString, argv[1]);
 
   printf("Pass 1\n");
   int matchesFound = findpattern(testString, sizeOfString, locations, locationsRequested);

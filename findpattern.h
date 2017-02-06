@@ -22,6 +22,7 @@ struct patmatch {
 	unsigned int location;
 	unsigned char mode; /* MEM_RW, or MEM_RO */
 };
+
 void segmentViolationHandler(int sig);
 
 bool isMatch(unsigned char * pattern, unsigned char * potentialPattern, unsigned int patlength);

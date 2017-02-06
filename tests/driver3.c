@@ -5,10 +5,10 @@
 
 int main(int argc, char *argv[]) {
   // for formatting
-  printf("test1\n");
+  printf("test3\n");
 
   // memory modification description
-  printf("This modification changes the memory of the address space to read-only using mprotect.\n\n");
+  printf("This modification changes the memory of the heap permissions from read/write to read-only using mmap and mprotect.\n\n");
 
   int locationsRequested = 20;
   struct patmatch * locations = malloc(locationsRequested*sizeof(struct patmatch));
@@ -17,7 +17,6 @@ int main(int argc, char *argv[]) {
   unsigned char * copy;
   copy = mmap(NULL, pageSize, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
   unsigned int sizeOfString = strlen(argv[1]);
-  printf("copy %p\n", copy);
   memcpy(copy, argv[1], sizeOfString);
   
   printf("Pass 1\n");
