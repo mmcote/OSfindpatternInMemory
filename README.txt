@@ -1,6 +1,6 @@
 (name ccid id)
-(Brad Hanasyk hanasyk1 1301531)
-(Michael Cote mmcote 1356556)
+(Brad Hanasyk hanasyk1 _______)
+(Michael Cote mmcote _______)
 
 Commands
 ----------------------------------------------------------------
